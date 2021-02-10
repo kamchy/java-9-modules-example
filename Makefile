@@ -1,8 +1,12 @@
 API := $(shell find api -name \*.java)
 GEN := $(shell find generator -name \*.java)
 CLI := $(shell find client -name \*.java)
+
+all: clean dist
+
 clean:
 	rm -rf mlib
+	rm -rf image
 
 mkmlib:
 	mkdir -p mlib
@@ -21,4 +25,13 @@ compile: compile_api compile_client compile_generator
 run: compile
 	java --module-path mlib -m client/com.kamilachyla.Main
   
-  
+dist: compile
+	jlink  --module-path mlib/ \
+		--add-modules client,api,generator \
+		--output image \
+		--launcher cli=client/com.kamilachyla.Main  \
+		--no-man-pages \
+		--no-header-files \
+		--compress 2 \
+		--strip-debug
+
