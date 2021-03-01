@@ -14,6 +14,11 @@ public class SimpleGenerator implements RectangleGenerator {
 
     @Override
     public String getName() {
+        return "simple";
+    }
+
+    @Override
+    public String getDescription() {
         return "Generates single Rect with x=0, y=0 and given width and height";
     }
 }
