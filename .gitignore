@@ -1,3 +1,7 @@
 .idea/
 out/
+image/
 **/*.iml
+**/*.class
+*.png
+mlib/

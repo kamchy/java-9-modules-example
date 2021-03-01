@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 public class Main {
     private static final Consumer<Rect> rectConsumer = System.out::println;
     private static final Consumer<RectangleGenerator> printNameGeneratorConsumer =
-            (RectangleGenerator g) -> System.out.println(g.getName());
+            (RectangleGenerator g) -> System.out.println(g.getDescription());
 
     public static void main(String[] args) {
         double width = 800;
