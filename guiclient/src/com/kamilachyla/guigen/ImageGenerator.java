@@ -13,13 +13,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ImageGenerator {
-    private final int width;
-    private final int height;
-    private final File file;
-    public ImageGenerator(int imgWidth, int imgHeight, File fileToSave) {
-        this.width = imgWidth;
-        this.height = imgHeight;
-        this.file = fileToSave;
+    private final ImageData imageData;
+    public ImageGenerator(ImageData imageData) {
+        this.imageData = imageData;
     }
 
     public static void main(String[] args) {
@@ -27,14 +23,14 @@ public class ImageGenerator {
             usage(Arrays.asList(args.clone()));
             System.exit(0);
         }
-
         List<String> argsList = Arrays.stream(args).collect(Collectors.toList());
         int width = getArg(argsList, 0, Integer::parseInt).orElse(800);
         int height = getArg(argsList, 1, Integer::parseInt).orElse(600);
         File fileName = getArg(argsList, 2, File::new).orElse(generateTimeStampFilename());
+
         RectangleGenerator rectGenerator = getArg(argsList, 3, Generators::byName)
                 .orElse(Optional.of(Generators.simple())).orElse(Generators.simple());
-        ImageGenerator gen = new ImageGenerator(width, height, fileName);
+        ImageGenerator gen = new ImageGenerator(new ImageData(width, height, fileName));
         gen.generate(rectGenerator);
         System.out.printf("Generated %s [%sx%s]", fileName.getAbsolutePath(), width, height);
     }
@@ -49,7 +45,7 @@ public class ImageGenerator {
 
     private void generate(RectangleGenerator rectangleGenerator) {
         Painter p = new Painter();
-        p.paint(getWidth(), getHeight(), getFile(), rectangleGenerator);
+        p.paint(imageData.width(), imageData.height(), imageData.file(), rectangleGenerator);
     }
 
     private static <T> Optional<T> getArg(List<String> argsList, int idx, Function<String, T> conv) {
@@ -64,17 +60,5 @@ public class ImageGenerator {
     private static File generateTimeStampFilename() {
         LocalDateTime dt = LocalDateTime.now();
         return new File(String.format("image_%s.png", dt.toString()));
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public File getFile() {
-        return file;
     }
 }
