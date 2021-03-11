@@ -40,7 +40,7 @@ public class ImageGenerator {
                                 Usage: width height filename generatorName
                                 where generatorName is one of %s.
                                 Arguments given: %s""",
-                Generators.names(), argsList);
+                Generators.getNames().toString(), argsList);
     }
 
     private void generate(RectangleGenerator rectangleGenerator) {
