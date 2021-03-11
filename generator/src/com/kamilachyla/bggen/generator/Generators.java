@@ -4,6 +4,7 @@ import com.kamilachyla.bggen.api.RectangleGenerator;
 import com.kamilachyla.bggen.generator.types.SimpleGenerator;
 import com.kamilachyla.bggen.generator.types.SquaresGenerator;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -27,12 +28,17 @@ public final class Generators {
         return Stream.of(simple(), squaresGenerator());
     }
 
-    public static String names() {
-        return Generators.all().map(RectangleGenerator::getName).collect(Collectors.joining(","));
-    }
-
     public static Optional<RectangleGenerator> byName(String s) {
         Supplier<RectangleGenerator> sup = suppliers.getOrDefault(s,  () -> null);
         return Optional.ofNullable(sup.get());
     }
+
+    public static List<String> getNames() {
+        return Generators.all().map(RectangleGenerator::getName).collect(Collectors.toList());
+    }
+
+    public static String getDefaultName() {
+        return "simple";
+    }
+
 }
