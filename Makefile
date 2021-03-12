@@ -27,10 +27,10 @@ compile_guiclient: compile_generator
 compile: compile_api compile_client compile_guiclient compile_generator
 
 run: compile
-	java --enable-preview --module-path mlib -m client/com.kamilachyla.Main
+	java --enable-preview  --module-path mlib -m client/com.kamilachyla.Main
 
 rungui: compile
-	java --enable-preview --module-path mlib -m guiclient/com.kamilachyla.guigen.ImageGenerator $(ARGS)
+	java --enable-preview  --module-path mlib -m guiclient/com.kamilachyla.gui.Main
   
 dist: compile
 	jlink  --module-path mlib/ \
