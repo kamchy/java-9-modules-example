@@ -11,7 +11,7 @@ final class GuiHelper {
     }
 
     public static final Border createBorder() {
-        return createMarkerBorder();
+        return createSpaceBorder();
     }
 
     private static CompoundBorder createMarkerBorder() {
