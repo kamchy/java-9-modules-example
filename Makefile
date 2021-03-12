@@ -16,21 +16,21 @@ compile_api: mkmlib
 	javac -d mlib/api $(API)
 
 compile_generator: compile_api
-	javac --enable-preview --release 14 --module-path mlib -d mlib/generator $(GEN)
+	javac --enable-preview --release 15 --module-path mlib -d mlib/generator $(GEN)
 
 compile_client: compile_generator
-	javac --enable-preview --release 14 --module-path mlib -d mlib/client $(CLI)
+	javac --enable-preview --release 15 --module-path mlib -d mlib/client $(CLI)
 
 compile_guiclient: compile_generator
-	javac --enable-preview --release 14 --module-path mlib -d mlib/guiclient $(GCLI)
+	javac --enable-preview --release 15 --module-path mlib -d mlib/guiclient $(GCLI)
 
 compile: compile_api compile_client compile_guiclient compile_generator
 
 run: compile
-	java --enable-preview --release 14 --module-path mlib -m client/com.kamilachyla.Main
+	java --enable-preview --module-path mlib -m client/com.kamilachyla.Main
 
 rungui: compile
-	java --enable-preview --release 14 --module-path mlib -m guiclient/com.kamilachyla.guigen.ImageGenerator $(ARGS)
+	java --enable-preview --module-path mlib -m guiclient/com.kamilachyla.guigen.ImageGenerator $(ARGS)
   
 dist: compile
 	jlink  --module-path mlib/ \
@@ -43,5 +43,5 @@ dist: compile
 		--compress 2 \
 		--strip-debug \
 		--enable-preview \
-		--release 14
+		--release 15
 
