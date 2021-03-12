@@ -12,6 +12,7 @@ java --enable-preview --module-path mlib -m guiclient/com.kamilachyla.guigen.Ima
 ```
 
 Resulting images:
+
 ![image1](out.png)
 ![image2](out2.png)
-![image3](out3.png)
+
