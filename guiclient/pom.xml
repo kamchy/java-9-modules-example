@@ -1,0 +1,76 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+
+  <parent>
+    <groupId>com.kamilachyla</groupId>
+    <artifactId>bggen</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+   
+  <groupId>com.kamilachyla</groupId>
+  <artifactId>guiclient</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>guiclient</name>
+
+
+  <dependencies>
+    <dependency>
+      <groupId>com.kamilachyla</groupId>
+      <artifactId>api</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.kamilachyla</groupId>
+      <artifactId>generator</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <plugins>
+      <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+        <version>2.1</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>guiclient/com.kamilachyla.guigen.ImageGenerator</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>3.0.0</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <executable>java</executable>
+                <arguments>
+                  <argument>--enable-preview</argument>
+                  <argument>--module-path</argument> <!-- or -p  -->
+                  <modulepath/>
+                  <argument>--module</argument> <!-- or -m -->
+                  <argument>guiclient/com.kamilachyla.guigen.ImageGenerator</argument>
+                    <argument>100</argument>
+                    <argument>100</argument>
+                    <argument>from-maven.png</argument>
+                    <argument>squares</argument>
+               </arguments>
+            </configuration>
+          </plugin>
+      </plugins>
+    </build>
+</project>

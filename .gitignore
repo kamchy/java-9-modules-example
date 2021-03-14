@@ -3,5 +3,6 @@ out/
 image/
 **/*.iml
 **/*.class
+**/target/
 *.png
 mlib/

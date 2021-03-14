@@ -1,0 +1,57 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.kamilachyla</groupId>
+    <artifactId>bggen</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+   
+  <groupId>com.kamilachyla</groupId>
+  <artifactId>client</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>client</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.kamilachyla</groupId>
+      <artifactId>api</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.kamilachyla</groupId>
+      <artifactId>generator</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.0.0</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>exec</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <executable>java</executable>
+              <arguments>
+                <argument>--enable-preview</argument>
+                <argument>--module-path</argument> <!-- or -p  -->
+                <modulepath/>
+                <argument>--module</argument> <!-- or -m -->
+                <argument>client/com.kamilachyla.Main</argument>
+             </arguments>
+          </configuration>
+        </plugin>
+    </plugins>
+  </build>
+</project>
