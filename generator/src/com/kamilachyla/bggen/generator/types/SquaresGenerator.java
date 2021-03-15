@@ -34,21 +34,24 @@ public class SquaresGenerator implements RectangleGenerator {
     }
 
     private Stream<Rect> split(Rect r) {
-        var half = Math.min(r.getWidth(), r.getHeight())/2.0;
+        double min = Math.min(r.getWidth(), r.getHeight());
+        boolean odd = min % 2 == 0;
+        int delta = odd ? 1 : 0;
+        var half = Math.round((odd ? (min - 1) : min) / 2.0);
         return List.of(
-                new Point(0.0, 0.0),
-                new Point(0, half),
-                new Point(half, 0),
-                new Point(half, half)).stream().map(p ->
-                    Rect.from(r.getX() + p.x, r.getY() + p.y, half, half));
+                Rect.from(r.getX(), r.getY(), half, half),
+                Rect.from(r.getX() + half, r.getY(), half + delta, half),
+                Rect.from(r.getX(), r.getY() + half + delta, half, half + delta),
+                Rect.from(r.getX() + half, r.getY() + half, half + delta, half + delta))
+                .stream();
     }
 
     private void generateAbs(Rect r, Stream.Builder<Rect> builder) {
         double minSize = Math.min(r.getWidth(), r.getHeight());
         boolean biggerWi = r.getWidth() > r.getHeight();
-        if ((r.getWidth() > 0) && (r.getHeight() > 0) && (minSize > 20)) {
+        if ((r.getWidth() > 0) && (r.getHeight() > 0) && (minSize > 10)) {
             builder.add(Rect.from(r.getX(), r.getY(), minSize, minSize));
-            split(r).forEach( quad ->{
+            split(r).forEach(quad -> {
                 if (rand.nextBoolean()) {
                     generateAbs(quad, builder);
                 } else {
