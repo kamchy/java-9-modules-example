@@ -1,0 +1,22 @@
+digraph "mlib" {
+    // Path: mlib
+   "com.kamilachyla"                                  -> "com.kamilachyla.bggen.api (mlib)";
+   "com.kamilachyla"                                  -> "com.kamilachyla.bggen.generator (mlib)";
+   "com.kamilachyla"                                  -> "java.io (java.base)";
+   "com.kamilachyla"                                  -> "java.lang (java.base)";
+   "com.kamilachyla"                                  -> "java.lang.invoke (java.base)";
+   "com.kamilachyla"                                  -> "java.util (java.base)";
+   "com.kamilachyla"                                  -> "java.util.function (java.base)";
+   "com.kamilachyla"                                  -> "java.util.stream (java.base)";
+   "com.kamilachyla.bggen.api"                        -> "java.lang (java.base)";
+   "com.kamilachyla.bggen.api"                        -> "java.lang.invoke (java.base)";
+   "com.kamilachyla.bggen.api"                        -> "java.util (java.base)";
+   "com.kamilachyla.bggen.api"                        -> "java.util.stream (java.base)";
+   "com.kamilachyla.bggen.generator"                  -> "com.kamilachyla.bggen.api (mlib)";
+   "com.kamilachyla.bggen.generator"                  -> "com.kamilachyla.bggen.generator.types (mlib)";
+   "com.kamilachyla.bggen.generator"                  -> "java.lang (java.base)";
+   "com.kamilachyla.bggen.generator"                  -> "java.util.stream (java.base)";
+   "com.kamilachyla.bggen.generator.types"            -> "com.kamilachyla.bggen.api (mlib)";
+   "com.kamilachyla.bggen.generator.types"            -> "java.lang (java.base)";
+   "com.kamilachyla.bggen.generator.types"            -> "java.util.stream (java.base)";
+}

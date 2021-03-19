@@ -1,0 +1,3 @@
+digraph "summary" {
+  "mlib"                                             -> "java.base (java.base)";
+}

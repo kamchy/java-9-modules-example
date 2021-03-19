@@ -15,6 +15,12 @@
   <packaging>jar</packaging>
   <name>guiclient</name>
 
+  <properties>
+    <img.width>120</img.width>
+    <img.height>120</img.height>
+    <img.file>maven.png</img.file>
+    <img.rectgen>grid</img.rectgen>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -64,10 +70,10 @@
                   <modulepath/>
                   <argument>--module</argument> <!-- or -m -->
                   <argument>guiclient/com.kamilachyla.guigen.ImageGenerator</argument>
-                    <argument>100</argument>
-                    <argument>100</argument>
-                    <argument>from-maven.png</argument>
-                    <argument>squares</argument>
+                    <argument>${img.width}</argument>
+                    <argument>${img.height}</argument>
+                    <argument>${img.file}</argument>
+                    <argument>${img.rectgen}</argument>
                </arguments>
             </configuration>
           </plugin>

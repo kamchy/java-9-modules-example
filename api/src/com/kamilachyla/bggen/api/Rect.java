@@ -1,5 +1,6 @@
 package com.kamilachyla.bggen.api;
 
+import java.util.Objects;
 import java.util.StringJoiner;
 
 public final class Rect {
@@ -17,6 +18,22 @@ public final class Rect {
         this.y = y;
         this.width = width;
         this.height = height;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Rect rect = (Rect) o;
+        return Double.compare(rect.x, x) == 0 &&
+                Double.compare(rect.y, y) == 0 &&
+                Double.compare(rect.width, width) == 0 &&
+                Double.compare(rect.height, height) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, width, height);
     }
 
     @Override
