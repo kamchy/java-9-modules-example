@@ -16,7 +16,7 @@ public final class Generators {
     private static final Map<String, Supplier<RectangleGenerator>> suppliers =
             Map.of("simple", Generators::simple,
                     "squares", Generators::squaresGenerator,
-            "grid", Generators::gridGenerator);
+                    "grid", Generators::gridGenerator);
 
     private static RectangleGenerator gridGenerator() {
         return new GridGenerator();
@@ -35,7 +35,6 @@ public final class Generators {
     }
 
     public static Optional<RectangleGenerator> byName(String s) {
-        System.out.printf("Retrieved generator by name %s%n", s);
         Supplier<RectangleGenerator> sup = suppliers.getOrDefault(s,  () -> null);
         return Optional.ofNullable(sup.get());
     }
