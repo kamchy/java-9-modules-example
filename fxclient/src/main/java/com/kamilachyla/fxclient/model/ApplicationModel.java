@@ -16,6 +16,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.util.StringConverter;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -32,6 +33,7 @@ public class ApplicationModel {
     public final SimpleObjectProperty<WritableImage> image;
     public final FileChooser chooser;
     public final SimpleObjectProperty<RectangleGenerator> currentGenerator;
+    public StringConverter<RectangleGenerator> rendererConverter = new RectangleGeneratorConverter();
     private Canvas ca;
     private Supplier<Color> colorSource;
 
@@ -41,7 +43,7 @@ public class ApplicationModel {
         file = new SimpleStringProperty(props.getFileName());
         renderers = new SimpleListProperty<>(
                 FXCollections.observableList(Generators.all().collect(Collectors.toList())));
-        currentGenerator = new SimpleObjectProperty<>(Generators.simple());
+        currentGenerator = new SimpleObjectProperty<>(Generators.squaresGenerator());
         image = new SimpleObjectProperty<>(new WritableImage(props.getImageWidth(), props.getImageHeight()));
         chooser = new FileChooser();
         chooser.initialFileNameProperty().bind(file);
@@ -50,6 +52,7 @@ public class ApplicationModel {
         ca.widthProperty().bind(width);
         ca.heightProperty().bind(height);
         colorSource = new ColorSource();
+        generate();
     }
 
     public Image getImage() {
@@ -60,6 +63,10 @@ public class ApplicationModel {
         var gc = ca.getGraphicsContext2D();
         gc.clearRect(0, 0, ca.getWidth(), ca.getHeight());
         currentGenerator.get().generate(width.doubleValue(), height.doubleValue()).forEach(r -> paintRect(r, gc, colorSource));
+        if ((width.intValue() != image.getValue().getWidth()) ||
+                (height.intValue() != image.getValue().getHeight())) {
+            image.setValue(new WritableImage(width.intValue(), height.intValue()));
+        }
         ca.snapshot(null, image.get());
     }
 
@@ -81,6 +88,18 @@ public class ApplicationModel {
         @Override
         public Color get() {
             return Color.hsb(Math.random() * 360, 0.8, 0.8);
+        }
+    }
+
+    private class RectangleGeneratorConverter extends StringConverter<RectangleGenerator> {
+        @Override
+        public String toString(RectangleGenerator rectangleGenerator) {
+            return rectangleGenerator.getName();
+        }
+
+        @Override
+        public RectangleGenerator fromString(String s) {
+            return Generators.byName(s).orElse(Generators.simple());
         }
     }
 }

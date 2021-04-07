@@ -1,25 +1,23 @@
 package com.kamilachyla.fxclient.gui;
 
-import com.kamilachyla.bggen.api.RectangleGenerator;
-import com.kamilachyla.bggen.generator.Generators;
 import com.kamilachyla.fxclient.model.ApplicationModel;
 import com.kamilachyla.fxclient.props.ApplicationProperties;
 import javafx.application.Application;
-import javafx.application.Platform;
+import javafx.beans.binding.StringBinding;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.geometry.Bounds;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
@@ -35,116 +33,121 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-        Scene scene = new Scene(createPane(), props.getWidth(), props.getHeight());
+        Scene scene = new Scene(createMainPane(), props.getWidth(), props.getHeight());
         stage.setScene(scene);
         stage.show();
     }
 
-    private Parent createPane() {
-        var pane = new HBox();
-        pane.getChildren().add(createImageView());
-        pane.getChildren().add(createControls());
-        return pane;
+    private Parent createHBox(Node... nodes) {
+        var parent = new HBox();
+        parent.setSpacing(10);
+        parent.getChildren().addAll(nodes);
+        return parent;
+    }
+
+    private Parent createMainPane() {
+        var bp = new BorderPane();
+        bp.setCenter(createImageView());
+        bp.setRight(createControls());
+        bp.setBottom(createDebugPanel());
+        return bp;
+    }
+
+    private Node createDebugPanel() {
+        var la = new Label();
+        la.textProperty().bind(StringBinding.stringExpression(model.width.asString().concat("x").concat(model.height.asString()).concat(model.currentGenerator.get().getName())));
+        return la;
+
+    }
+
+    private Button createButton(String mnemonic, EventHandler<ActionEvent> handler) {
+        Button button = new Button(mnemonic);
+        button.setMnemonicParsing(true);
+        button.setOnAction(handler);
+        return button;
     }
 
     private Node createButtons() {
-        var hbox = new HBox();
-        Button buSave = new Button("_Save");
-        buSave.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
-                    model.save();
-                }
-        );
-        Button buGenerate = new Button("_Generate");
-        buGenerate.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
-            model.generate();
-        });
-        hbox.getChildren().add(buSave);
-        hbox.getChildren().add(buGenerate);
-        return hbox;
+        Button buSave = createButton("_Save", (e) -> model.save());
+        Button buGenerate = createButton("_Generate", (e) -> model.generate());
+        return createHBox(buSave, buGenerate);
     }
 
     private Node createControls() {
         var controls = new VBox();
-        controls.getChildren().add(labelledIntegerEntry("Width", model.width));
-        controls.getChildren().add(labelledIntegerEntry("Height", model.height));
-        controls.getChildren().add(labelledFileEntry("File", model.file));
-        controls.getChildren().add(labelledDropdown("Renderes", model.renderers));
+        controls.setSpacing(5);
+        controls.getChildren().add(labelledIntegerEntry("_Width", model.width));
+        controls.getChildren().add(labelledIntegerEntry("_Height", model.height));
+        controls.getChildren().add(labelledFileEntry("_File", model.file));
+        controls.getChildren().add(labelledDropdown("G_enerators", model.renderers, model.currentGenerator, model.rendererConverter));
         controls.getChildren().add(createButtons());
-        return controls;
+
+        var titlePane = new TitledPane("Settings", controls);
+        titlePane.setText("Settings");
+        return titlePane;
     }
 
-    private Node labelledDropdown(String renderes, SimpleListProperty<RectangleGenerator> renderersProp) {
-        var label = new Label(renderes);
-        var spi = new ComboBox<RectangleGenerator>();
-        spi.itemsProperty().bind(model.renderers);
-        model.currentGenerator.bind(spi.getSelectionModel().selectedItemProperty());
-        spi.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(RectangleGenerator rectangleGenerator) {
-                return rectangleGenerator.getName();
-            }
-
-            @Override
-            public RectangleGenerator fromString(String s) {
-                return Generators.byName(s).orElse(Generators.simple());
-            }
-        });
+    private <T> Node labelledDropdown(String labelStr, SimpleListProperty<T> renderersProp,
+                                      SimpleObjectProperty<T> currentGenerator, StringConverter<T> converter) {
+        var label = new Label(labelStr);
+        label.setMnemonicParsing(true);
+        var spi = new ComboBox<T>();
+        label.setLabelFor(spi);
+        spi.itemsProperty().bind(renderersProp);
+        currentGenerator.bind(spi.getSelectionModel().selectedItemProperty());
+        spi.setConverter(converter);
         spi.getSelectionModel().select(0);
-        var hbox = new HBox();
-        hbox.getChildren().add(label);
-        hbox.getChildren().add(spi);
-        return hbox;
+        return createHBox(label, spi);
     }
 
     private Node labelledFileEntry(String file, SimpleStringProperty namePr) {
-        var bu = new Button(file);
-        bu.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
+        var bu = createButton(file, (e) -> {
             File f = model.chooser.showOpenDialog(null);
             model.file.setValue(f.getName());
-
-
         });
+
         var la = new Label();
-        la.setLabelFor(bu);
         la.textProperty().bindBidirectional(namePr);
-        var pa = new HBox();
-        pa.getChildren().addAll(la, bu);
-        return pa;
+        return createHBox(bu, la);
     }
 
     private Node labelledIntegerEntry(String labelContent, SimpleIntegerProperty textFieldValue) {
-        var hbox = new HBox();
-        hbox.getChildren().add(new Label(labelContent));
         var spi = new Spinner<Integer>();
-        SpinnerValueFactory.IntegerSpinnerValueFactory integerSpinnerValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(10, 1024);
-        integerSpinnerValueFactory.setAmountToStepBy(10);
-        integerSpinnerValueFactory.setValue(textFieldValue.getValue());
-        spi.setValueFactory(integerSpinnerValueFactory);
-        hbox.getChildren().add(spi);
-        return hbox;
+        Label label = new Label(labelContent);
+        label.setMnemonicParsing(true);
+        label.setLabelFor(spi);
+        var factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(10, 2048);
+        spi.setEditable(true);
+        factory.setAmountToStepBy(100);
+        factory.valueProperty().bindBidirectional(textFieldValue.asObject());
+        spi.setValueFactory(factory);
+        // hack for spinner not updating backing prop when typing manually
+        //https://stackoverflow.com/questions/32340476/manually-typing-in-text-in-javafx-spinner-is-not-updating-the-value-unless-user
+        TextFormatter<Integer> formatter = new TextFormatter<>(factory.getConverter(), factory.getValue());
+        formatter.valueProperty().bindBidirectional(textFieldValue.asObject());
+        spi.getEditor().setTextFormatter(formatter);
+        factory.valueProperty().bindBidirectional(formatter.valueProperty());
+        return createHBox(label, spi);
     }
 
     private Node createImageView() {
         var iv = new ImageView();
-        iv.setImage(model.getImage());
-        return iv;
+        iv.imageProperty().bind(model.image);
+        // add iv with StackPane as wrapper:
+        // hack from https://www.javaer101.com/en/article/13369262.html
+        var p = new ScrollPane();
+//        stackPane.minWidthProperty().bind(
+//                createDoubleBinding(() ->
+//                p.getViewportBounds().getWidth(), p.viewportBoundsProperty()));
+        /*stackPane.minWidthProperty().bind(model.width);
+        stackPane.minHeightProperty().bind(model.height);
+        p.setContent(stackPane);*/
+        p.setContent(iv);
+        p.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        p.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        return p;
 
     }
 
-    private Node createRect() {
-        var r = new Rectangle(800f, 800f);
-        r.addEventHandler(MouseEvent.MOUSE_MOVED, (e) -> {
-            Platform.runLater(() -> r.setFill(Paint.valueOf(colorStringFrom(r.getBoundsInLocal(), e.getX(), e.getY()))));
-        });
-        return r;
-    }
-
-    private String colorStringFrom(Bounds boundsInLocal, double x, double y) {
-        var hue = (x / boundsInLocal.getWidth()) * 360;
-        var sat = (y / boundsInLocal.getHeight()) * 100;
-        var result = String.format("hsl(%s, %s%%, 90%%)", hue, sat);
-        System.out.printf("%s%n", result);
-        return result;
-    }
 
 }

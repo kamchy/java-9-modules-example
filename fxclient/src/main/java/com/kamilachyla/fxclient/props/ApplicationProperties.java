@@ -1,17 +1,15 @@
 package com.kamilachyla.fxclient.props;
 
 import java.io.IOException;
-import java.util.Objects;
 import java.util.Properties;
 
 public class ApplicationProperties {
 
-    private final Properties defaultProps;
     private final Properties properties;
 
     public ApplicationProperties() {
-        this.properties = readProperties();
-        this.defaultProps = defaultProperties();
+        this.properties = defaultProperties();
+        readProperties().forEach(properties::put);
     }
 
     private static Properties defaultProperties() {
@@ -20,8 +18,8 @@ public class ApplicationProperties {
         dp.setProperty(Props.GUI_HEIGHT.propName, "600");
         dp.setProperty(Props.GUI_COLOR.propName, "hsl(234, 90%, 90%)");
         dp.setProperty(Props.IMAGE_FNAME.propName, "image.png");
-        dp.setProperty(Props.GUI_IMAGE_WIDTH.propName, "800");
-        dp.setProperty(Props.GUI_IMAGE_HEIGHT.propName, "800");
+        dp.setProperty(Props.GUI_IMAGE_WIDTH.propName, "400");
+        dp.setProperty(Props.GUI_IMAGE_HEIGHT.propName, "400");
         return dp;
     }
 
@@ -31,7 +29,7 @@ public class ApplicationProperties {
     }
 
     private String getStringProp(Props p) {
-        return properties.computeIfAbsent(p.propName, defaultProps::get).toString();
+        return properties.get(p.propName).toString();
     }
 
     public int getWidth() {
@@ -61,17 +59,12 @@ public class ApplicationProperties {
 
     private Properties readProperties() {
         Properties props = new Properties();
-        var is = getClass().getClassLoader().getResourceAsStream("application.properties");
         try {
-            props.load(is);
-        } catch (IOException e) {
-            props = defaultProperties();
-        } finally {
-            try {
-                Objects.requireNonNull(is).close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            try (var is = getClass().getClassLoader().getResourceAsStream("application.properties")) {
+                props.load(is);
             }
+        } catch (IOException ignored) {
+
         }
         return props;
     }
