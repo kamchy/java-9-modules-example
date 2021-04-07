@@ -19,9 +19,9 @@ public class GridGenerator implements RectangleGenerator {
         var sb = Stream.<Rect>builder();
         for (int x = 0; x < wi; x += GRID_RECT_SIDE) {
             for (int y = 0; y < hi; y += GRID_RECT_SIDE) {
-                Rect rect = Rect.from(x, y,
-                        Math.min(GRID_RECT_SIDE, Math.abs(wi - x)),
-                        Math.min(GRID_RECT_SIDE, Math.abs(hi - y)));
+                var width = x + GRID_RECT_SIDE > wi ? wi - x : GRID_RECT_SIDE;
+                var height = y + GRID_RECT_SIDE > hi ? hi - y : GRID_RECT_SIDE;
+                Rect rect = Rect.from(x, y, width, height);
                 sb.add(rect);
                 System.out.printf("Grid generator: %s%n", rect);
             }

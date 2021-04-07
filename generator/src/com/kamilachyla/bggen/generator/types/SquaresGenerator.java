@@ -35,7 +35,7 @@ public class SquaresGenerator implements RectangleGenerator {
 
     private Stream<Rect> split(Rect r) {
         double min = Math.min(r.getWidth(), r.getHeight());
-        boolean odd = min % 2 == 0;
+        boolean odd = min % 2 == 1;
         int delta = odd ? 1 : 0;
         var half = Math.round((odd ? (min - 1) : min) / 2.0);
         return List.of(
