@@ -23,7 +23,6 @@ public class GridGenerator implements RectangleGenerator {
                 var height = y + GRID_RECT_SIDE > hi ? hi - y : GRID_RECT_SIDE;
                 Rect rect = Rect.from(x, y, width, height);
                 sb.add(rect);
-                System.out.printf("Grid generator: %s%n", rect);
             }
         }
         return sb.build();
