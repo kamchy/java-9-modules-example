@@ -34,8 +34,9 @@ public class ApplicationModel {
     public final FileChooser chooser;
     public final SimpleObjectProperty<RectangleGenerator> currentGenerator;
     public StringConverter<RectangleGenerator> rendererConverter = new RectangleGeneratorConverter();
-    private Canvas ca;
-    private Supplier<Color> colorSource;
+    public final SimpleStringProperty currentGeneratorName;
+    private final Canvas ca;
+    private final Supplier<Color> colorSource;
 
     public ApplicationModel(ApplicationProperties props) {
         width = new SimpleIntegerProperty(props.getImageWidth());
@@ -44,6 +45,13 @@ public class ApplicationModel {
         renderers = new SimpleListProperty<>(
                 FXCollections.observableList(Generators.all().collect(Collectors.toList())));
         currentGenerator = new SimpleObjectProperty<>(Generators.squaresGenerator());
+        currentGeneratorName = new SimpleStringProperty(currentGenerator.getName());
+        currentGenerator.addListener((ob, oldv, newv) -> {
+            if (newv != null) {
+                currentGeneratorName.set(newv.getName());
+            }
+        });
+
         image = new SimpleObjectProperty<>(new WritableImage(props.getImageWidth(), props.getImageHeight()));
         chooser = new FileChooser();
         chooser.initialFileNameProperty().bind(file);

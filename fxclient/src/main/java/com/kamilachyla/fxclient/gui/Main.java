@@ -3,6 +3,7 @@ package com.kamilachyla.fxclient.gui;
 import com.kamilachyla.fxclient.model.ApplicationModel;
 import com.kamilachyla.fxclient.props.ApplicationProperties;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleListProperty;
@@ -55,10 +56,17 @@ public class Main extends Application {
 
     private Node createDebugPanel() {
         var la = new Label();
-        la.textProperty().bind(StringBinding.stringExpression(model.width.asString().concat("x").concat(model.height.asString()).concat(model.currentGenerator.get().getName())));
-        return la;
 
+        final var info = StringBinding
+                .stringExpression(model.width)
+                .concat("x")
+                .concat(model.height)
+                .concat(" - ")
+                .concat(model.currentGeneratorName);
+        la.textProperty().bind(info);
+        return la;
     }
+
 
     private Button createButton(String mnemonic, EventHandler<ActionEvent> handler) {
         Button button = new Button(mnemonic);
@@ -70,7 +78,8 @@ public class Main extends Application {
     private Node createButtons() {
         Button buSave = createButton("_Save", (e) -> model.save());
         Button buGenerate = createButton("_Generate", (e) -> model.generate());
-        return createHBox(buSave, buGenerate);
+        Button buExit = createButton("E_xit", (e) -> Platform.exit());
+        return createHBox(buSave, buGenerate, buExit);
     }
 
     private Node createControls() {
@@ -93,7 +102,7 @@ public class Main extends Application {
         label.setMnemonicParsing(true);
         var spi = new ComboBox<T>();
         label.setLabelFor(spi);
-        spi.itemsProperty().bind(renderersProp);
+        spi.itemsProperty().bindBidirectional(renderersProp);
         currentGenerator.bind(spi.getSelectionModel().selectedItemProperty());
         spi.setConverter(converter);
         spi.getSelectionModel().select(0);
