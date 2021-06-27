@@ -49,13 +49,15 @@ runfx: compile_fxclient
 
 dist: compile
 	jlink  --module-path mlib/ \
-		--add-modules client,api,generator,guiclient \
+		--add-modules client,api,generator,guiclient,fxclient \
 		--output image \
 		--launcher cli=client/com.kamilachyla.Main  \
 		--launcher gcli=guiclient/com.kamilachyla.guigen.ImageGenerator  \
 		--launcher swingcli=guiclient/com.kamilachyla.gui.Main  \
+		--launcher fxcli=fxclient/com.kamilachyla.fxclient.gui.Main \
 		--no-man-pages \
 		--no-header-files \
 		--compress 2 \
-		--strip-debug \
+		--strip-debug
 
+	for name in image/bin/fxcli image/bin/swingcli image/bin/cli image/bin/gcli ; do sed -i 's/\(JLINK_VM_OPTIONS=\)/\1--enable-preview/' $$name; done

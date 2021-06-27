@@ -8,10 +8,10 @@ It illustrates concepts described in [Praktyczny przykład - trzy moduły](https
 Generates images with specified width, height, file name and type or rectangle generator.
 
 ## Requirements
-**Requires java 15**
+**Requires java 16**
 Originally the project was developed on java 9 (hence its gihub name). In the meantime, as new java versions had been arriving, I extended inital simple app and created a sandbox for checking out new features of subsequent Java releases (records, sealed classes, var ect). 
 
-Currently it requires Java 15 and should be built with `--enable-preview` option.
+Currently it requires Java 16 and should be built with `--enable-preview` option.
 
 ## Using Make
 
@@ -20,8 +20,11 @@ Currently it requires Java 15 and should be built with `--enable-preview` option
 * cli - just prints to stdout a list of generated rectangles
 * gcli - generates single image from commandline
 * swingcli - shows Swing window
+* fxcli - shows javafx window
 
-In ordrer to be able to actually run them, I edit manually the scripts and add `--enable-preview` to each script's JLINK_VM_OPTIONS 
+### Fixing launcher scripts
+
+In ordrer to be able to actually run them, I edit the scripts and add `--enable-preview` to each script's JLINK_VM_OPTIONS 
 , so insted of 
 
 ```bash 
@@ -37,6 +40,14 @@ the script looks like this:
 JLINK_VM_OPTIONS=--enable-preview
 DIR=`dirname $0`
 $DIR/java $JLINK_VM_OPTIONS -m client/com.kamilachyla.Main "$@"
+```
+
+The command that does the trick is simple loop with a `sed` call (double $ sign to refer to simple variable, not make variable; see [gnu make official docs](https://www.gnu.org/software/make/manual/html_node/Reference.html):
+
+```bash
+	for name in image/bin/fxcli image/bin/swingcli image/bin/cli image/bin/gcli ; do 
+    sed -i 's/\(JLINK_VM_OPTIONS=\)/\1--enable-preview/' $$name; 
+  done
 ```
 
 ## Images and screenshots
