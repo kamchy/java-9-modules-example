@@ -2,6 +2,7 @@ package com.kamilachyla.painter;
 
 import com.kamilachyla.bggen.api.Rect;
 import com.kamilachyla.bggen.api.RectangleGenerator;
+import com.kamilachyla.bggen.generator.Generators;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -12,6 +13,16 @@ import java.util.Iterator;
 import java.util.function.Supplier;
 
 public final class Painter {
+
+    public void paint(BufferedImage image, String generatorName) {
+        var gen = Generators.byName(generatorName).orElse(Generators.simple());
+        ColorGenerator colorGen = new ColorGenerator(0.9f, 0.8f);
+        var cgs = colorGen.colorStream(Color.getHSBColor(330f/360, 0.9f, 0.9f));
+        Iterator<Color> colorIter = cgs.iterator();
+        Graphics2D g = image.createGraphics();
+        g.setBackground(colorIter.next());
+        gen.generate(image.getWidth(), image.getHeight()).forEach(rect -> paintImage(g, rect, colorIter::next));
+    }
 
     public void paint(int width, int height, File file, RectangleGenerator rectangleGenerator) {
         ColorGenerator colorGen = new ColorGenerator(0.9f, 0.8f);

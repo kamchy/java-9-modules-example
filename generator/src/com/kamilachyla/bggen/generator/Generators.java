@@ -1,6 +1,7 @@
 package com.kamilachyla.bggen.generator;
 
 import com.kamilachyla.bggen.api.RectangleGenerator;
+import com.kamilachyla.bggen.generator.types.GridGenerator;
 import com.kamilachyla.bggen.generator.types.SimpleGenerator;
 import com.kamilachyla.bggen.generator.types.SquaresGenerator;
 
@@ -14,7 +15,12 @@ import java.util.stream.Stream;
 public final class Generators {
     private static final Map<String, Supplier<RectangleGenerator>> suppliers =
             Map.of("simple", Generators::simple,
-                    "squares", Generators::squaresGenerator);
+                    "squares", Generators::squaresGenerator,
+                    "grid", Generators::gridGenerator);
+
+    private static RectangleGenerator gridGenerator() {
+        return new GridGenerator();
+    }
 
     public static RectangleGenerator simple() {
         return new SimpleGenerator();
@@ -25,7 +31,7 @@ public final class Generators {
     }
 
     public static Stream<RectangleGenerator> all() {
-        return Stream.of(simple(), squaresGenerator());
+        return suppliers.values().stream().map(Supplier::get);
     }
 
     public static Optional<RectangleGenerator> byName(String s) {
