@@ -61,7 +61,9 @@ public class ApplicationProperties {
         Properties props = new Properties();
         try {
             try (var is = getClass().getClassLoader().getResourceAsStream("application.properties")) {
+              if (is != null) {
                 props.load(is);
+              }
             }
         } catch (IOException ignored) {
 
